@@ -1,0 +1,22 @@
+{
+  "name": "reservation-system",
+  "version": "1.0.0",
+  "description": "time reservation / appointment system for PAS.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Steven Wang",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.2",
+    "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
+    "express-session": "^1.17.1",
+    "moment": "^2.25.3",
+    "mongoose": "^5.9.12",
+    "nodemailer": "^6.4.6",
+    "nodemailer-plugin-inline-base64": "^2.1.1",
+    "qrcode": "^1.4.4"
+  }
+}

@@ -1,0 +1,108 @@
+<script type="text/javascript">
+var timeslotsArray = [];
+var dropdownIndex = -1;
+var isDisabled = false;
+
+<!-- query and refresh form data -->
+function updateForm() {
+  $.ajax({
+    type: 'GET',
+    url: 'http://localhost:3000/api/form',
+    success: function(data) {
+      console.log(data);
+      // check if form open
+      isDisabled = data.isDisabled;
+      if (!isDisabled) {
+        $('#form-title').html(data.title);
+        $('#form-desc').html(data.description);
+      }
+      else {
+        $('#reserve-form').parent().append('<h1 class="display-3">Events unavailable !</h1>');
+        $('#reserve-form').detach();
+        $('footer').removeClass('static-bottom');
+        $('footer').addClass('fixed-bottom');
+      }
+    },
+    dataType: 'json'
+  });
+}
+updateForm();
+
+<!-- query and refresh time slot -->
+function updateSlot() {
+  $.getJSON( 'http://localhost:3000/api/timeslot', (data) => {
+    console.log(data);
+    timeslotsArray = [];
+    // populate list
+    if (data.length > 0) {
+      $('#timeslot').html('');
+      data.forEach((slot, i) => {
+        let template = `
+        <li class="dropdown-item">
+          ${moment(slot.startDateTime).format('MMMM Do, h:mm a')} ~ ${moment(slot.endDateTime).format('MMMM Do, h:mm a')}
+        </li>
+        `
+        $('#timeslot').append(template);
+        // update array
+        timeslotsArray.push(slot._id);
+      });
+      console.log(timeslotsArray);
+      updateDropdown();
+    } else {
+      console.log('empty slot');
+      $('#dropdownMenu').addClass('disabled');
+      $('#dropdownMenu').text('Sorry, No available time slots!');
+    }
+  })
+    .fail((err) => {
+      console.log('obtaining slot failed');
+      $('#dropdownMenu').addClass('disabled');
+      $('#dropdownMenu').text('Failed to load time slots!');
+    });
+}
+if (!isDisabled) {
+  updateSlot();
+}
+
+<!-- update dropdown text -->
+function updateDropdown() {
+  var $dropDownItems = $('.dropdown').find('.dropdown-menu').children();
+  $dropDownItems.on('click', function() {
+    dropdownIndex = $dropDownItems.index(this);
+    console.log('index: ', $dropDownItems.index(this), 'id: ', timeslotsArray[$dropDownItems.index(this)]);
+    $(".btn:first-child").text($(this).text());
+  });
+}
+
+// <!-- form submit -->
+if (!isDisabled) {
+  $("#reserve-form").submit(function(e) {
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+    if (dropdownIndex === -1) {
+      alert('Please select a time slot.');
+      return;
+    }
+    const postData = {
+      name: $('#inputName').val(),
+      email: $('#inputEmail').val(),
+      phone: $('#inputPhone').val(),
+      timeslotid: timeslotsArray[dropdownIndex]
+    }
+    console.log(postData);
+    $.ajax({
+       type: "POST",
+       url: 'http://localhost:3000/api/record',
+       data: JSON.stringify(postData), // serializes the form's elements.
+       success: function(data)
+       {
+         updateSlot();
+         // redirect to complete page
+         window.location.href = `/reserve/completed/${data._id}`;
+       },
+       contentType: 'application/json',
+       dataType: 'json'
+     });
+  });
+}
+
+</script>

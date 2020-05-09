@@ -1,0 +1,67 @@
+<!-- Page Content -->
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12 text-center">
+      <h1 class="mt-5">Admin Portal</h1>
+      <p class="lead">Edit events and view reservations.</p>
+
+      <!-- form container -->
+        <div class="card">
+          <div class="card-body">
+          <div class="col-lg-8 mx-auto">
+            <!-- description -->
+            <h3 class="mt-5">Edit Event</h3>
+            <p class="lead">Update event to display.</p>
+            <!-- form -->
+            <form id="edit-form">
+              <div class="form-group">
+                <label for="inputName">Event Title</label>
+                <input id="form-title" type="text" class="form-control" id="inputTitle" placeholder="Title">
+              </div>
+              <div class="form-group">
+                <label for="inputText">Description</label>
+                <textarea id="form-desc" class="form-control" id="inputText" rows="3" placeholder="Description"></textarea>
+              </div>
+              <!-- date picker -->
+              <div class="form-group">
+                <label for="datepicker">Time Slots</label>
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" name="datepicker" />
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" onclick="addTimeSlot();">ADD</button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group overflow-auto" style="max-height: 500px">
+                <ul id="timeslot" class="list-group">
+                  <!-- timeslots goes here -->
+                </ul>
+              </div>
+              <div class="form-group">
+                <input class="form-check-input" type="checkbox" value="" id="form-disable">
+                <label class="form-check-label" for="form-disable">
+                  Disable (check to make form unavailable to user)
+                </label>
+              </div>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- view reservation -->
+      <div class="card mt-5">
+        <div class="card-body">
+          <div class="col-lg-8 mx-auto">
+            <!-- description -->
+            <h3 class="mt-5">Reservations</h3>
+            <p class="lead">View Appointments with Clients.</p>
+            <!-- cards -->
+            <div id="reserve-list" class="overflow-auto" style="max-height: 600px">
+              <!-- populate reserve list -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

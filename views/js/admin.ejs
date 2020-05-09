@@ -1,0 +1,214 @@
+<script type="text/javascript">
+var timeslotsArray = [];
+var reservelistArray = [];
+
+$(function() {
+  $('input[name="datepicker"]').daterangepicker({
+    timePicker: true,
+    autoUpdateInput: false,
+    locale: {
+        cancelLabel: 'Clear'
+    }
+  });
+  $('input[name="datepicker"]').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('M/DD hh:mm A') + ' - ' + picker.endDate.format('M/DD hh:mm A'));
+  });
+  $('input[name="datepicker"]').on('cancel.daterangepicker', function(ev, picker) {
+      $(this).val('Click to add time slot');
+  });
+  $('input[name="datepicker"]').val('Click to add time slot');
+});
+
+<!-- query and refresh form data -->
+function updateForm() {
+  $.ajax({
+    type: 'GET',
+    url: 'http://localhost:3000/api/form',
+    success: function(data) {
+      console.log(data);
+      $('#form-title').val(data.title);
+      $('#form-desc').val(data.description);
+      $('#form-disable').prop('checked', data.isDisabled);
+    },
+    dataType: 'json'
+  });
+}
+updateForm();
+
+<!-- query and refresh time slot -->
+function updateSlot() {
+  $.getJSON( 'http://localhost:3000/api/timeslot', (data) => {
+    console.log(data);
+    timeslotsArray = [];
+    // populate list
+    if (data.length > 0) {
+      $('#timeslot').html('');
+      data.forEach((slot, i) => {
+        let template = `
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          ${moment(slot.startDateTime).format('MMMM Do, h:mm a')} ~ ${moment(slot.endDateTime).format('MMMM Do, h:mm a')}
+          <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </li>
+        `
+        $('#timeslot').append(template);
+        // update array
+        timeslotsArray.push(slot._id);
+      });
+      // attach delete listener
+      deleteTimeSlot();
+      console.log(timeslotsArray);
+    } else {
+      console.log('empty slot');
+      $('#timeslot').html('<li class="list-group-item">Time slot empty.</li>');
+    }
+  })
+    .fail((err) => {
+      console.log('obtaining slot failed');
+      $('#timeslot').html('<li class="list-group-item">Error obtaining time slots.</li>');
+    });
+}
+updateSlot();
+
+<!-- add time slot -->
+function addTimeSlot() {
+  $('input[name="datepicker"]').val('Click to add time slot');
+  const data = $('input[name="datepicker"]').data('daterangepicker');
+  const postData = JSON.stringify({ startDateTime: data.startDate._d, endDateTime: data.endDate._d });
+  // post to api
+  $.ajax({
+    type: 'POST',
+    url: 'http://localhost:3000/api/timeslot',
+    data: postData,
+    success: function(data) {
+      $.notify({
+        title: '<strong>Update: </strong>',
+        message: 'Time slot added !'
+      });
+      updateSlot();
+    },
+    contentType: "application/json",
+    dataType: 'json'
+  });
+  console.log(data.startDate._d);
+  console.log(data.endDate._d);
+}
+
+<!-- delete time slot -->
+function deleteTimeSlot() {
+  var $listgroupItems = $('#timeslot').children();
+  console.log($listgroupItems);
+  $listgroupItems.find('button').on('click', function() {
+    console.log('index: ', $listgroupItems.index(this.closest('.list-group-item')));
+    // delete to api
+    $.ajax({
+      type: 'DELETE',
+      url: `http://localhost:3000/api/timeslot/${timeslotsArray[$listgroupItems.index(this.closest('.list-group-item'))]}`,
+      success: function(data) {
+        $.notify({
+          title: '<strong>Update: </strong>',
+          message: 'Time slot deleted !'
+        });
+        updateSlot();
+      },
+      dataType: 'json'
+    });
+  });
+}
+
+// <!-- form submit -->
+$("#edit-form").submit(function(e) {
+  e.preventDefault(); // avoid to execute the actual submit of the form.
+  const postData = {
+    title: $('#form-title').val(),
+    description: $('#form-desc').val(),
+    isDisabled: $('#form-disable').is(":checked")
+  }
+  console.log(postData);
+  $.ajax({
+     type: "POST",
+     url: 'http://localhost:3000/api/form',
+     data: JSON.stringify(postData), // serializes the form's elements.
+     success: function(data)
+     {
+         $.notify({
+           title: '<strong>Update: </strong>',
+           message: 'Form succesfully saved !'
+         });
+         updateForm();
+     },
+     contentType: 'application/json',
+     dataType: 'json'
+   });
+});
+
+<!-- populate resrvations -->
+function updateReserveList() {
+  $.ajax({
+    type: 'GET',
+    url: `http://localhost:3000/api/record`,
+    success: function(data) {
+      console.log(data);
+      reservelistArray = [];
+      $('#reserve-list').html('');
+      if (data.length > 0) {
+        data.forEach((record, i) => {
+          const template = `
+          <div class="card mb-3 reserve-list-item">
+            <div class="card-body">
+              <h5 class="card-title">${record.name}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">${moment(record.timeslot.startDateTime).fromNow()}</h6>
+                <strong>Date:</strong> ${formatDateRange(moment(record.timeslot.startDateTime), moment(record.timeslot.endDateTime))}
+                <br>
+                <strong>Email:</strong> ${record.email}
+                <br>
+                <strong>Phone:</strong> ${record.phone}
+                <br>
+              <a href="#reserve-list" class="card-link">Complete</a>
+            </div>
+          </div>
+          `
+          $('#reserve-list').append(template);
+          reservelistArray.push(record._id);
+        });
+        deleteRecord();
+      } else {
+        const template = `
+        <div class="card mb-3">
+          <div class="card-body">
+            <p class="card-text">No reservation.</p>
+          </div>
+        </div>
+        `
+        $('#reserve-list').append(template);
+      }
+    },
+    dataType: 'json'
+  });
+}
+updateReserveList();
+
+<!-- delete records -->
+function deleteRecord() {
+  var $cardgroupItems = $('#reserve-list').children();
+  console.log($cardgroupItems);
+  $cardgroupItems.find('a').on('click', function() {
+    console.log('index: ', $cardgroupItems.index(this.closest('.reserve-list-item')));
+    // delete to api
+    $.ajax({
+      type: 'DELETE',
+      url: `http://localhost:3000/api/record/${reservelistArray[$cardgroupItems.index(this.closest('.reserve-list-item'))]}`,
+      success: function(data) {
+        $.notify({
+          title: '<strong>Update: </strong>',
+          message: 'Appointment completed !'
+        });
+        updateReserveList();
+      },
+      dataType: 'json'
+    });
+  });
+}
+
+</script>
