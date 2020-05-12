@@ -15,7 +15,13 @@ const router = express.Router();
   get all records
 */
 router.get('/', async (req, res) => {
-  const response = await Record.Model.find({}).sort('timeslot.startDateTime').lean();
+  // const response = await Record.Model.find({}).sort('timeslot.startDateTime').lean();
+  const response = await Record.Model.paginate({}, {
+    page: req.query.page || 1,
+    limit: req.query.limit || 10,
+    sort: 'timeslot.startDateTime',
+    lean: true
+  })
   res.send(response);
 });
 /*
@@ -51,7 +57,7 @@ router.post('/', async (req, res) => {
   });
   transporter.use('compile', inlineBase64({ cidPrefix: 'eticket_' }));
   let info = transporter.sendMail({
-    from: '"PAS Reservation E-Ticket" <stevenjust4work@gmail.com>', // sender address
+    from: '"✔️PAS Reservation E-Ticket✔️" <stevenjust4work@gmail.com>', // sender address
     to: "steven97102@gmail.com", // list of receivers
     subject: "PAS Reservation E-Ticket", // Subject line
     html: `

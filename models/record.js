@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 const TimeSlot = require('../models/timeslot');
 
 
@@ -24,6 +25,7 @@ const recordSchema = new mongoose.Schema({
     required: false
   }
 });
+recordSchema.plugin(mongoosePaginate);
 const Record = mongoose.model('records', recordSchema);
 
 // utils

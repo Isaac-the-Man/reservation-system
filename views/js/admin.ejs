@@ -150,61 +150,63 @@ function updateReserveList() {
     url: `http://localhost:3000/api/record`,
     success: function(data) {
       console.log(data);
-      reservelistArray = [];
-      $('#reserve-list').html('');
-      if (data.length > 0) {
-        data.forEach((record, i) => {
-          const template = `
-          <div class="card mb-3 reserve-list-item">
-            <div class="card-body">
-              <h5 class="card-title">${record.name}</h5>
-              <h6 class="card-subtitle mb-2 text-muted">${moment(record.timeslot.startDateTime).fromNow()}</h6>
-                <strong>Date:</strong> ${formatDateRange(moment(record.timeslot.startDateTime), moment(record.timeslot.endDateTime))}
-                <br>
-                <strong>Email:</strong> ${record.email}
-                <br>
-                <strong>Phone:</strong> ${record.phone}
-                <br>
-              <a href="#reserve-list" class="card-link">Complete</a>
-            </div>
-          </div>
-          `
-          $('#reserve-list').append(template);
-          reservelistArray.push(record._id);
-        });
-        deleteRecord();
-      } else {
-        const template = `
-        <div class="card mb-3">
-          <div class="card-body">
-            <p class="card-text">No reservation.</p>
-          </div>
-        </div>
-        `
-        $('#reserve-list').append(template);
+      // paginators
+      $('#paginator').html('');
+      var pageTemplate = '';
+      for (var i = 0; i < data.totalPages; i++) {
+        pageTemplate += `
+          <li class="page-item">
+            <button class="page-link">${i + 1}</button>
+          </li>
+        `;
       }
+      $('#paginator').html(pageTemplate);
+      paginateReserves();
+      $('#paginator').children().first().find('button').trigger('click');
     },
     dataType: 'json'
   });
 }
 updateReserveList();
 
-<!-- delete records -->
-function deleteRecord() {
-  var $cardgroupItems = $('#reserve-list').children();
-  console.log($cardgroupItems);
-  $cardgroupItems.find('a').on('click', function() {
-    console.log('index: ', $cardgroupItems.index(this.closest('.reserve-list-item')));
-    // delete to api
+<!-- paginate reservations -->
+function paginateReserves() {
+  var $pageItems = $('#paginator').children();
+  console.log($pageItems);
+  $pageItems.find('button').on('click', function() {
+    $pageItems.removeClass('active');
+    $(this).closest('.page-item').addClass('active');
+    // fetch from api
+    console.log('page ' + ($pageItems.index(this.closest('.page-item')) + 1));
     $.ajax({
-      type: 'DELETE',
-      url: `http://localhost:3000/api/record/${reservelistArray[$cardgroupItems.index(this.closest('.reserve-list-item'))]}`,
+      type: 'GET',
+      url: `http://localhost:3000/api/record/?page=${$pageItems.index(this.closest('.page-item')) + 1}`,
       success: function(data) {
-        $.notify({
-          title: '<strong>Update: </strong>',
-          message: 'Appointment completed !'
-        });
-        updateReserveList();
+        console.log(data);
+        // table content
+        reservelistArray = [];
+        $('#reserve-list').html('');
+        if (data.docs.length > 0) {
+          data.docs.forEach((record, i) => {
+            const template = `
+            <tr>
+              <th scope="row">${data.pagingCounter + i}</th>
+              <td>${record.name}</td>
+              <td>${record.email}</td>
+              <td>${record.phone}</td>
+              <td>${formatDateRange(moment(record.timeslot.startDateTime), moment(record.timeslot.endDateTime))}</td>
+              <td>${ (record.completion) ? moment(record.completion).format('dddd, MMMM Do, H:mm') : 'open'}</td>
+            </tr>
+            `
+            $('#reserve-list').append(template);
+            reservelistArray.push(record._id);
+          });
+        } else {
+          const template = `
+            <i class="text-center">No Reservation.</i>
+          `;
+          $('#reserve-list').closest('.col-lg-auto').append(template);
+        }
       },
       dataType: 'json'
     });
