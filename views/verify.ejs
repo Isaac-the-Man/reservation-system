@@ -39,12 +39,26 @@
         <div class="col-6 mx-auto">
           <h1 class="display-1 text-center">
           <% if (status) { %>
-            <%= 'Verification Success!' %>
+            <% if (expired) { %>
+              <%= 'Verification Expired!' %>
+            <% } else { %>
+              <%= 'Verification Success!' %>
+            <% } %>
           <% } else { %>
             <%= 'Verification Failed!' %>
           <% } %>
           </h1>
-          <span class="glyphicon glyphicon-ok"></span>
+          <ul class="list-group text-center mt-3">  
+            <% if (status) { %>
+             <li class="list-group-item">Name: <%= data.name %></li>
+             <li class="list-group-item">Email: <%= data.email %></li>
+             <li class="list-group-item">Phone: <%= data.phone %></li>
+             <li class="list-group-item">Time: <%= data.timeslot %></li>
+             <% if (data.completion) { %>
+               <li class="list-group-item">Expired at: <%= data.completion %></li>
+             <% } %>
+            <% } %>
+          </ul>
         </div>
       </div>
     </div>

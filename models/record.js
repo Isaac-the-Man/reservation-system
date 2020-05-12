@@ -18,6 +18,10 @@ const recordSchema = new mongoose.Schema({
   timeslot: {
     type: TimeSlot.Schema,
     required: true
+  },
+  completion: {
+    type: Date,
+    required: false
   }
 });
 const Record = mongoose.model('records', recordSchema);
