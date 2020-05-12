@@ -32,6 +32,7 @@ app.use(session({
   saveUninitialized: true
 }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
 // pages
 app.use('/reserve/home', routeHome);
 app.use('/reserve/admin', routeadmin);
@@ -46,7 +47,7 @@ app.use('/api/auth', routeAuth);
 // 404 handler
 app.use('/reserve', route404);
 // error handler
-app.use ( function(req, res, next, err) {
+app.use ( (err, req, res, next) => {
   res.status(500).send('Something went wrong...');
   console.log(err);
 });

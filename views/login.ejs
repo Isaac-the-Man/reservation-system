@@ -41,6 +41,11 @@
             <div class="card-body">
               <h3 class="card-title">Admin Login</h3>
               <form action="/api/auth" method="post">
+                <% if (error == 1) { %>
+                  <div class="alert alert-danger" role="alert">
+                    <%= 'Authorization failed.' %>
+                  </div>
+                <% } %>
                 <div class="form-group">
                   <label for="exampleInputEmail1">Account</label>
                   <input type="email" name="account" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">

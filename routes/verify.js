@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const auth = require('../middleware/auth');
 const Record = require('../models/record');
 
 
@@ -9,7 +10,7 @@ const router = express.Router();
 /*
   check availibility
 */
-router.get('/:id', async(req, res) => {
+router.get('/:id', auth('verify'), async(req, res) => {
   try {
     var isVerified = true;
     const record = await Record.Model.findById(req.params.id);

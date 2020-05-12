@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const auth = require('../middleware/auth');
 const Form = require('../models/form');
 const TimeSlot = require('../models/timeslot');
 
@@ -7,17 +8,13 @@ const TimeSlot = require('../models/timeslot');
 const router = express.Router();
 
 // api
-router.get('/', async (req, res) => {
-  if (req.session.loggedin) {
-    const template = {
-      body: "admin.ejs",
-      nav: 1,
-      customjs: "js/admin.ejs"
-    }
-    res.render('template', { template: template});
-    return;
+router.get('/', auth('admin'), async (req, res) => {
+  const template = {
+    body: "admin.ejs",
+    nav: 1,
+    customjs: "js/admin.ejs"
   }
-  res.redirect('/reserve/login');
+  res.render('template', { template: template});
 });
 
 // exports

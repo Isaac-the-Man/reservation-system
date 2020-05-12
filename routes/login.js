@@ -6,7 +6,10 @@ router = express.Router();
 
 // api
 router.get('/', async (req, res) => {
-  res.render('login');
+  const carries = {
+    error: req.query.error
+  }
+  res.render('login', carries);
 });
 
 // exports

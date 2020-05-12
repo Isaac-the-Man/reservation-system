@@ -51,7 +51,7 @@ router.post('/', async (req, res) => {
   });
   transporter.use('compile', inlineBase64({ cidPrefix: 'eticket_' }));
   let info = transporter.sendMail({
-    from: '"Fred Foo 👻" <stevenjust4work@gmail.com>', // sender address
+    from: '"PAS Reservation E-Ticket" <stevenjust4work@gmail.com>', // sender address
     to: "steven97102@gmail.com", // list of receivers
     subject: "PAS Reservation E-Ticket", // Subject line
     html: `
