@@ -39,7 +39,7 @@ function updateSlot() {
       data.forEach((slot, i) => {
         let template = `
         <li class="dropdown-item">
-          ${moment(slot.startDateTime).format('MMMM Do, h:mm a')} ~ ${moment(slot.endDateTime).format('MMMM Do, h:mm a')}
+          ${formatDateRange(moment(slot.startDateTime), moment(slot.endDateTime))}
         </li>
         `
         $('#timeslot').append(template);

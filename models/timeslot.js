@@ -3,14 +3,12 @@ const mongoose = require('mongoose');
 
 const timeSchema = new mongoose.Schema({
   startDateTime: {
-    type: String,
-    required: true,
-    default: Date.now
+    type: Date,
+    required: true
   },
   endDateTime: {
-    type: String,
-    required: true,
-    default: Date.now
+    type: Date,
+    required: true
   }
 });
 const TimeSlot = mongoose.model('timeslots', timeSchema);

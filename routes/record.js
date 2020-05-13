@@ -4,6 +4,7 @@ const Record = require('../models/record');
 const TimeSlot = require('../models/timeslot');
 const nodemailer = require('nodemailer');
 const moment = require('moment');
+const { parse } = require('json2csv');
 var QRCode = require('qrcode')
 var inlineBase64 = require('nodemailer-plugin-inline-base64');
 
@@ -15,13 +16,19 @@ const router = express.Router();
   get all records
 */
 router.get('/', async (req, res) => {
-  // const response = await Record.Model.find({}).sort('timeslot.startDateTime').lean();
-  const response = await Record.Model.paginate({}, {
+  var rangeQuery = {};
+  if (req.query.from && req.query.till) {
+    rangeQuery = {
+      'timeslot.startDateTime': { $gte: moment(req.query.from).toDate(), $lte: moment(req.query.till).toDate() }
+    }
+  }
+  console.log(req.query);
+  const response = await Record.Model.paginate(rangeQuery, {
     page: req.query.page || 1,
     limit: req.query.limit || 10,
     sort: 'timeslot.startDateTime',
     lean: true
-  })
+  });
   res.send(response);
 });
 /*
@@ -59,6 +66,7 @@ router.post('/', async (req, res) => {
   let info = transporter.sendMail({
     from: '"✔️PAS Reservation E-Ticket✔️" <stevenjust4work@gmail.com>', // sender address
     to: "steven97102@gmail.com", // list of receivers
+    cc: "stevenwang@pacificamerican.org",
     subject: "PAS Reservation E-Ticket", // Subject line
     html: `
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
@@ -98,6 +106,22 @@ router.post('/', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   const response = await Record.Model.findByIdAndDelete(req.params.id);
   res.send(response);
+});
+/*
+  export as csv
+*/
+router.get('/csv', async (req, res) => {
+  var rangeQuery = {};
+  if (req.query.from && req.query.till) {
+    rangeQuery = {
+      'timeslot.startDateTime': { $gte: moment(req.query.from).toDate(), $lte: moment(req.query.till).toDate() }
+    }
+  }
+  const records = await Record.Model.find(rangeQuery).sort('timeslot.startDateTime').lean();
+  const csv = parse(records, { fields: ['name', 'email', 'phone', 'timeslot.startDateTime', 'timeslot.endDateTime', 'completion'] });
+  res.attachment('record.csv');
+  res.status(200);
+  res.send(csv);
 });
 
 // exports

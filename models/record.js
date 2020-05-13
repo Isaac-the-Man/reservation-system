@@ -1,31 +1,38 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
+const exportable = require('@lykmapipo/mongoose-exportable');
 const TimeSlot = require('../models/timeslot');
 
 
 const recordSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    exportable: true
   },
   email: {
     type: String,
-    required:true
+    required:true,
+    exportable: true
   },
   phone: {
     type: String,
-    required: true
+    required: true,
+    exportable: true
   },
   timeslot: {
     type: TimeSlot.Schema,
-    required: true
+    required: true,
+    exportable: true
   },
   completion: {
     type: Date,
-    required: false
+    required: false,
+    exportable: true
   }
 });
 recordSchema.plugin(mongoosePaginate);
+recordSchema.plugin(exportable);
 const Record = mongoose.model('records', recordSchema);
 
 // utils

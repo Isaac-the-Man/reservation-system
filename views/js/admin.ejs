@@ -46,7 +46,7 @@ function updateSlot() {
       data.forEach((slot, i) => {
         let template = `
         <li class="list-group-item d-flex justify-content-between align-items-center">
-          ${moment(slot.startDateTime).format('MMMM Do, h:mm a')} ~ ${moment(slot.endDateTime).format('MMMM Do, h:mm a')}
+          ${formatDateRange(moment(slot.startDateTime), moment(slot.endDateTime))}
           <button type="button" class="close" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -75,7 +75,7 @@ updateSlot();
 function addTimeSlot() {
   $('input[name="datepicker"]').val('Click to add time slot');
   const data = $('input[name="datepicker"]').data('daterangepicker');
-  const postData = JSON.stringify({ startDateTime: data.startDate._d, endDateTime: data.endDate._d });
+  const postData = JSON.stringify({ startDateTime: moment(data.startDate._d).toDate(), endDateTime: moment(data.endDate._d).toDate() });
   // post to api
   $.ajax({
     type: 'POST',
@@ -144,10 +144,10 @@ $("#edit-form").submit(function(e) {
 });
 
 <!-- populate resrvations -->
-function updateReserveList() {
+function updateReserveList(query) {
   $.ajax({
     type: 'GET',
-    url: `http://localhost:3000/api/record`,
+    url: (query) ? `http://localhost:3000/api/record?from=${query.from}&till=${query.till}` : `http://localhost:3000/api/record`,
     success: function(data) {
       console.log(data);
       // paginators
@@ -161,7 +161,7 @@ function updateReserveList() {
         `;
       }
       $('#paginator').html(pageTemplate);
-      paginateReserves();
+      paginateReserves(query);
       $('#paginator').children().first().find('button').trigger('click');
     },
     dataType: 'json'
@@ -170,7 +170,7 @@ function updateReserveList() {
 updateReserveList();
 
 <!-- paginate reservations -->
-function paginateReserves() {
+function paginateReserves(query) {
   var $pageItems = $('#paginator').children();
   console.log($pageItems);
   $pageItems.find('button').on('click', function() {
@@ -180,13 +180,14 @@ function paginateReserves() {
     console.log('page ' + ($pageItems.index(this.closest('.page-item')) + 1));
     $.ajax({
       type: 'GET',
-      url: `http://localhost:3000/api/record/?page=${$pageItems.index(this.closest('.page-item')) + 1}`,
+      url: (query) ? `http://localhost:3000/api/record?page=${$pageItems.index(this.closest('.page-item')) + 1}&from=${query.from}&till=${query.till}` : `http://localhost:3000/api/record?page=${$pageItems.index(this.closest('.page-item')) + 1}`,
       success: function(data) {
         console.log(data);
         // table content
         reservelistArray = [];
         $('#reserve-list').html('');
         if (data.docs.length > 0) {
+          $('#reserve-status').html('');
           data.docs.forEach((record, i) => {
             const template = `
             <tr>
@@ -205,12 +206,64 @@ function paginateReserves() {
           const template = `
             <i class="text-center">No Reservation.</i>
           `;
-          $('#reserve-list').closest('.col-lg-auto').append(template);
+          $('#reserve-status').html(template);
         }
       },
       dataType: 'json'
     });
   });
+}
+
+<!-- date filter -->
+$(function() {
+  $('input[name="datefilter"]').daterangepicker({
+      autoUpdateInput: false,
+      locale: {
+          cancelLabel: 'Clear'
+      }
+  });
+  $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('MM/DD') + ' - ' + picker.endDate.format('MM/DD'));
+  });
+  $('input[name="datefilter"]').on('cancel.daterangepicker', function(ev, picker) {
+      $(this).val('');
+  });
+});
+
+<!-- query date -->
+function queryDate() {
+  console.log('queried');
+  const data = $('input[name="datefilter"]').data('daterangepicker');
+  const query = { from: moment(data.startDate._d).format('YYYY-MM-DD'), till: moment(data.endDate._d).format('YYYY-MM-DD') };
+  console.log(query);
+  // post to api
+  updateReserveList(query);
+}
+
+<!-- export quried as csv -->
+function exportQuery() {
+  console.log('preparing export');
+  const data = $('input[name="datefilter"]').data('daterangepicker');
+  const query = { from: moment(data.startDate._d).format('YYYY-MM-DD'), till: moment(data.endDate._d).format('YYYY-MM-DD') };
+  console.log(query);
+  fetch((query) ? `http://localhost:3000/api/record/csv?from=${query.from}&till=${query.till}` : `http://localhost:3000/api/record/csv`,)
+  .then(resp => resp.blob())
+  .then(blob => {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    // the filename you want
+    a.download = 'record.csv';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    $.notify({
+      title: '<strong>Info: </strong>',
+      message: 'Query Downloaded !'
+    });
+  })
+  .catch(() => alert('oh no!'));
 }
 
 </script>

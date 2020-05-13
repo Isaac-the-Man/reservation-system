@@ -68,6 +68,18 @@
               <!-- description -->
               <h3 class="mt-5">Reservations</h3>
               <p class="lead">View Appointments with Clients.</p>
+              <!-- export -->
+              <div class="row mb-3">
+                <div class="col">
+                  <div class="input-group d-flex justify-content-center">
+                    <input class="text-center" type="text" name="datefilter" value="" />
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" type="button" onclick="queryDate();">Query</button>
+                      <button class="btn btn-outline-secondary" type="button" onclick="exportQuery();">Export</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <!-- table -->
               <table class="table table-striped">
                 <thead>
@@ -76,7 +88,7 @@
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Phone</th>
-                    <th scope="col">Time</th>
+                    <th scope="col">Reservation</th>
                     <th scope="col">Expired</th>
                   </tr>
                 </thead>
@@ -84,6 +96,7 @@
                   <!-- populate reserve-list -->
                 </tbody>
               </table>
+              <div id="reserve-status"></div>
               <!-- paginate -->
               <ul id="paginator" class="pagination justify-content-center">
                 <!-- populate paginator -->
