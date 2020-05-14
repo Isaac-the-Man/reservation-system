@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const Record = require('../models/record');
 const TimeSlot = require('../models/timeslot');
+const auth = require('../middleware/auth');
 const nodemailer = require('nodemailer');
 const moment = require('moment');
 const { parse } = require('json2csv');
@@ -15,7 +16,7 @@ const router = express.Router();
 /*
   get all records
 */
-router.get('/', async (req, res) => {
+router.get('/', auth('admin'), async (req, res) => {
   var rangeQuery = {};
   if (req.query.from && req.query.till) {
     rangeQuery = {
@@ -34,7 +35,7 @@ router.get('/', async (req, res) => {
 /*
   create records
 */
-router.post('/', async (req, res) => {
+router.post('/', auth('admin'), async (req, res) => {
   // find timeslot
   const timeslot = await TimeSlot.Model.findByIdAndDelete(req.body.timeslotid);
   if (!timeslot) {
@@ -103,14 +104,14 @@ router.post('/', async (req, res) => {
 /*
   delete rocords
 */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth('admin'), async (req, res) => {
   const response = await Record.Model.findByIdAndDelete(req.params.id);
   res.send(response);
 });
 /*
   export as csv
 */
-router.get('/csv', async (req, res) => {
+router.get('/csv', auth('admin'), async (req, res) => {
   var rangeQuery = {};
   if (req.query.from && req.query.till) {
     rangeQuery = {

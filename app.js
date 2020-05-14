@@ -1,5 +1,6 @@
 const express = require('express');
 require('express-async-errors');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const session = require('express-session');
 // import routes
@@ -25,6 +26,7 @@ mongoose.connect('mongodb://localhost:27017/reservation-system',{
 
 // start app
 const app = express();
+app.use(cors());
 app.set('view engine', 'ejs');
 app.use(session({
   secret: 'ih;;i{bL6y,8Y&R!+4;#oUdMsy`/oW+f3`et/.IxHCM<kS|I|Zl*:MHEvcVUC!c',

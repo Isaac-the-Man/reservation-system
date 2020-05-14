@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const auth = require('../middleware/auth');
 const TimeSlot = require('../models/timeslot');
 
 
@@ -20,7 +21,7 @@ router.get('/', async (req, res) => {
 /*
   new timeslots
 */
-router.post('/', async (req, res) => {
+router.post('/', auth('admin'), async (req, res) => {
   // parse url
   console.log(req.body);
   // new time slot
@@ -34,7 +35,7 @@ router.post('/', async (req, res) => {
 /*
   delete timeslots
 */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth('admin'), async (req, res) => {
   const response = await TimeSlot.Model.findByIdAndDelete(req.params.id);
   res.send(response);
 });

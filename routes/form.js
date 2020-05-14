@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const auth = require('../middleware/auth');
 const Form = require('../models/form');
 
 
@@ -21,7 +22,7 @@ router.get('/', async (req, res) => {
 /*
   update form metadata
 */
-router.post('/', async (req, res) => {
+router.post('/', auth('admin'), async (req, res) => {
   // read form data
   const formData = await Form.Model.findOne({}).select('_id title description isDisabled');
   if (!formData) {
