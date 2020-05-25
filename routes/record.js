@@ -8,6 +8,7 @@ const moment = require('moment');
 const { parse } = require('json2csv');
 var QRCode = require('qrcode')
 var inlineBase64 = require('nodemailer-plugin-inline-base64');
+const config = require('config');
 
 
 const router = express.Router();
@@ -62,17 +63,17 @@ router.post('/', auth('admin'), async (req, res) => {
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
-      user: 'pasportal@pacificamerican.org', // generated ethereal user
-      pass: 'PortalAdmin$#@!' // generated ethereal password
+      user: config.get('mail.senderAccount'), // generated ethereal user
+      pass: config.get('mail.senderPassword') // generated ethereal password
     }
   });
   console.log('authed');
   transporter.use('compile', inlineBase64({ cidPrefix: 'eticket_' }));
   try {
     let info = transporter.sendMail({
-      from: '"✔️PAS Reservation E-Ticket✔️" <stevenjust4work@gmail.com>', // sender address
-      to: "steven97102@gmail.com", // list of receivers
-      cc: "stevenwang@pacificamerican.org",
+      from: `"✔️PAS Reservation E-Ticket✔️" <${config.get('mail.senderAccount')}>`, // sender address
+      to: newRecord.email, // list of receivers
+      cc: config.get('mail.cc'),
       subject: "PAS Reservation E-Ticket", // Subject line
       html: `
       <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
