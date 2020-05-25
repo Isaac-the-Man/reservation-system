@@ -195,6 +195,9 @@ function paginateReserves(query) {
               <td>${record.name}</td>
               <td>${record.email}</td>
               <td>${record.phone}</td>
+              <td>${record.childName}</td>
+              <td>${record.childGrade}</td>
+              <td>${record.childNation}</td>
               <td>${formatDateRange(moment(record.timeslot.startDateTime), moment(record.timeslot.endDateTime))}</td>
               <td>${ (record.completion) ? moment(record.completion).format('dddd, MMMM Do, H:mm') : 'open'}</td>
             </tr>
@@ -240,7 +243,7 @@ function queryDate() {
   updateReserveList(query);
 }
 
-<!-- export quried as csv -->
+<!-- export queried as csv -->
 function exportQuery() {
   console.log('preparing export');
   const data = $('input[name="datefilter"]').data('daterangepicker');

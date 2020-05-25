@@ -20,6 +20,18 @@ const recordSchema = new mongoose.Schema({
     required: true,
     exportable: true
   },
+  childName :{
+    type: String,
+    required: true
+  },
+  childGrade :{
+    type: String,
+    required: true
+  },
+  childNation :{
+    type: String,
+    required: true
+  },
   timeslot: {
     type: TimeSlot.Schema,
     required: true,
