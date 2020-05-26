@@ -38,7 +38,7 @@ router.get('/', auth('admin'), async (req, res) => {
 */
 router.post('/', auth('admin'), async (req, res) => {
   // find timeslot
-  const timeslot = await TimeSlot.Model.findByIdAndDelete(req.body.timeslotid);
+  const timeslot = await TimeSlot.Model.findById(req.body.timeslotid);
   if (!timeslot) {
     res.status(404).send('Time slot unavailable!');
     return;
