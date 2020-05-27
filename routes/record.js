@@ -36,7 +36,7 @@ router.get('/', auth('admin'), async (req, res) => {
 /*
   create records
 */
-router.post('/', auth('admin'), async (req, res) => {
+router.post('/', async (req, res) => {
   // find timeslot
   const timeslot = await TimeSlot.Model.findById(req.body.timeslotid);
   if (!timeslot) {
@@ -55,7 +55,7 @@ router.post('/', auth('admin'), async (req, res) => {
   });
   const response = await newRecord.save();
   // create ticket qrcode
-  const ticket = await QRCode.toDataURL(`http://localhost:3000/reserve/verify/${newRecord._id}`);
+  const ticket = await QRCode.toDataURL("https://pasportal.pacificamerican.org/reserve/verify/" + newRecord._id);
   console.log(ticket);
   // send mail
   let transporter = nodemailer.createTransport({

@@ -7,7 +7,7 @@ var isDisabled = false;
 function updateForm() {
   $.ajax({
     type: 'GET',
-    url: 'http://localhost:3000/api/form',
+    url: 'https://pasportal.pacificamerican.org/api/form',
     success: function(data) {
       console.log(data);
       // check if form open
@@ -30,7 +30,7 @@ updateForm();
 
 <!-- query and refresh time slot -->
 function updateSlot() {
-  $.getJSON( 'http://localhost:3000/api/timeslot', (data) => {
+  $.getJSON( 'https://pasportal.pacificamerican.org/api/timeslot', (data) => {
     console.log(data);
     timeslotsArray = [];
     // populate list
@@ -94,7 +94,7 @@ if (!isDisabled) {
     console.log(postData);
     $.ajax({
        type: "POST",
-       url: 'http://localhost:3000/api/record',
+       url: 'https://pasportal.pacificamerican.org/api/record',
        data: JSON.stringify(postData), // serializes the form's elements.
        success: function(data)
        {
