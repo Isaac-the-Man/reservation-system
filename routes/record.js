@@ -86,7 +86,7 @@ router.post('/', async (req, res) => {
           <p>
           親愛的家長,<br>
           我們已收到您的資訊, 屆時您可於活動時間, 直接到校參加說明會.<br>
-          期待在 5/31​ 下午 2點與您見面.<br>
+          期待在${moment(newRecord.timeslot.startDateTime).format('lll')}與您見面.<br>
           有任何問題歡迎email pas@pacificamerican.org或者是撥打 03-5586688 #825<br>
           </p>
           <p>Thank you for registering the event with us! Please present this E-Ticket to the staff members on your arrival.</p>
