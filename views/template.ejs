@@ -38,7 +38,7 @@
     </div>
   </nav>
 
-  <%- include(template.body) %>
+  <%- include(template.body); %>
 
   <!-- Footer -->
   <footer class="mt-5 py-5 bg-dark static-bottom">
@@ -89,7 +89,7 @@
     });
   </script>
   <% if (template.customjs) { %>
-  <%- include(template.customjs) %>
+  <%- include(template.customjs, {baseURL:template.baseURL}) %>
   <% } %>
 </body>
 

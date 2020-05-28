@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const config = require('config');
 
 
 const router = express.Router();
@@ -9,7 +10,8 @@ router.get('/', async (req, res) => {
   const template = {
     body: "home.ejs",
     nav: 0,
-    customjs: "js/home.ejs"
+    customjs: "js/home.ejs",
+    baseURL: config.get("baseURL")
   }
   res.render('template', { template: template });
 });

@@ -23,7 +23,7 @@ $(function() {
 function updateForm() {
   $.ajax({
     type: 'GET',
-    url: 'https://pasportal.pacificamerican.org/api/form',
+    url: '<%= baseURL %>/api/form',
     success: function(data) {
       console.log(data);
       $('#form-title').val(data.title);
@@ -37,7 +37,7 @@ updateForm();
 
 <!-- query and refresh time slot -->
 function updateSlot() {
-  $.getJSON( 'https://pasportal.pacificamerican.org/api/timeslot', (data) => {
+  $.getJSON( '<%= baseURL %>/api/timeslot', (data) => {
     console.log(data);
     timeslotsArray = [];
     // populate list
@@ -79,7 +79,7 @@ function addTimeSlot() {
   // post to api
   $.ajax({
     type: 'POST',
-    url: 'https://pasportal.pacificamerican.org/api/timeslot',
+    url: '<%= baseURL %>/api/timeslot',
     data: postData,
     success: function(data) {
       $.notify({
@@ -104,7 +104,7 @@ function deleteTimeSlot() {
     // delete to api
     $.ajax({
       type: 'DELETE',
-      url: `https://pasportal.pacificamerican.org/api/timeslot/${timeslotsArray[$listgroupItems.index(this.closest('.list-group-item'))]}`,
+      url: `<%= baseURL %>/api/timeslot/${timeslotsArray[$listgroupItems.index(this.closest('.list-group-item'))]}`,
       success: function(data) {
         $.notify({
           title: '<strong>Update: </strong>',
@@ -128,7 +128,7 @@ $("#edit-form").submit(function(e) {
   console.log(postData);
   $.ajax({
      type: "POST",
-     url: 'https://pasportal.pacificamerican.org/api/form',
+     url: '<%= baseURL %>/api/form',
      data: JSON.stringify(postData), // serializes the form's elements.
      success: function(data)
      {
@@ -147,7 +147,7 @@ $("#edit-form").submit(function(e) {
 function updateReserveList(query) {
   $.ajax({
     type: 'GET',
-    url: (query) ? `https://pasportal.pacificamerican.org/api/record?from=${query.from}&till=${query.till}` : `https://pasportal.pacificamerican.org/api/record`,
+    url: (query) ? `<%= baseURL %>/api/record?from=${query.from}&till=${query.till}` : `<%= baseURL %>/api/record`,
     success: function(data) {
       console.log(data);
       // paginators
@@ -180,7 +180,7 @@ function paginateReserves(query) {
     console.log('page ' + ($pageItems.index(this.closest('.page-item')) + 1));
     $.ajax({
       type: 'GET',
-      url: (query) ? `https://pasportal.pacificamerican.org/api/record?page=${$pageItems.index(this.closest('.page-item')) + 1}&from=${query.from}&till=${query.till}` : `https://pasportal.pacificamerican.org/api/record?page=${$pageItems.index(this.closest('.page-item')) + 1}`,
+      url: (query) ? `<%= baseURL %>/api/record?page=${$pageItems.index(this.closest('.page-item')) + 1}&from=${query.from}&till=${query.till}` : `<%= baseURL %>/api/record?page=${$pageItems.index(this.closest('.page-item')) + 1}`,
       success: function(data) {
         console.log(data);
         // table content
@@ -249,7 +249,7 @@ function exportQuery() {
   const data = $('input[name="datefilter"]').data('daterangepicker');
   const query = { from: moment(data.startDate._d).format('YYYY-MM-DD'), till: moment(data.endDate._d).format('YYYY-MM-DD') };
   console.log(query);
-  fetch((query) ? `https://pasportal.pacificamerican.org/api/record/csv?from=${query.from}&till=${query.till}` : `https://pasportal.pacificamerican.org/api/record/csv`,)
+  fetch((query) ? `<%= baseURL %>/api/record/csv?from=${query.from}&till=${query.till}` : `<%= baseURL %>/api/record/csv`,)
   .then(resp => resp.blob())
   .then(blob => {
     const url = window.URL.createObjectURL(blob);
