@@ -27,7 +27,7 @@ router.get('/:id', auth('verify'), async(req, res) => {
         city: record.city,
         childName: record.childName,
         childGrade: record.childGrade,
-        childNation: childNation,
+        childNation: record.childNation,
         timeslot: `${moment(record.timeslot.startDateTime).format('dddd, MMMM Do, H:mm')} ~ ${moment(record.timeslot.endDateTime).format('dddd, MMMM Do, H:mm')}`,
       }
       if (!record.completion) {
@@ -42,6 +42,7 @@ router.get('/:id', auth('verify'), async(req, res) => {
       await record.save();
     }
   } catch (e) {
+    console.log(e);
     isVerified = false;
   }
   res.render('verify', { status: isVerified, expired: isExpired, data: data });
