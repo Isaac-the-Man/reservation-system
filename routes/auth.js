@@ -6,6 +6,9 @@ const Admin = require('../models/admin');
 router = express.Router();
 
 // api
+/*
+sign in
+*/
 router.post('/', async (req, res) => {
   // check db
   const response = await Admin.Model.find({ account: req.body.account, password: req.body.password }).lean();
@@ -16,6 +19,13 @@ router.post('/', async (req, res) => {
   req.session.loggedin = true;
   req.session.account = req.body.account;
   res.redirect(`/reserve/${req.session.redirectTo}${(req.session.param) ? '/' + req.session.param : ''}`);
+});
+/*
+sign out
+*/
+router.get('/', (req, res) => {
+  req.session.destroy();
+  res.send('log out');
 });
 
 // exports

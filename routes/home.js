@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     customjs: "js/home.ejs",
     baseURL: config.get("baseURL")
   }
-  res.render('template', { template: template });
+  res.render('template', { template: template, isAdmin: false });
 });
 
 // exports

@@ -270,4 +270,14 @@ function exportQuery() {
   .catch(() => alert('oh no!'));
 }
 
+<!-- sign out user -->
+function signout() {
+  $.ajax({
+    type: 'GET',
+    url: '<%= baseURL %>/api/auth/'
+  });
+  console.log('logged out');
+  window.location.href = '/reserve/admin';
+}
+
 </script>

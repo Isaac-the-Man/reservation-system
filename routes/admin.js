@@ -14,7 +14,7 @@ router.get('/', auth('admin'), async (req, res) => {
     nav: 1,
     customjs: "js/admin.ejs"
   }
-  res.render('template', { template: template});
+  res.render('template', { template: template, isAdmin: true });
 });
 
 // exports
