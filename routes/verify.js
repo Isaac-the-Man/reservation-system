@@ -24,6 +24,10 @@ router.get('/:id', auth('verify'), async(req, res) => {
         name: record.name,
         email: record.email,
         phone: record.phone,
+        city: record.city,
+        childName: record.childName,
+        childGrade: record.childGrade,
+        childNation: childNation,
         timeslot: `${moment(record.timeslot.startDateTime).format('dddd, MMMM Do, H:mm')} ~ ${moment(record.timeslot.endDateTime).format('dddd, MMMM Do, H:mm')}`,
       }
       if (!record.completion) {
