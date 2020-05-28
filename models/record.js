@@ -20,17 +20,25 @@ const recordSchema = new mongoose.Schema({
     required: true,
     exportable: true
   },
+  city: {
+    type: String,
+    required: true,
+    exportable: true
+  },
   childName :{
     type: String,
-    required: true
+    required: true,
+    exportable: true
   },
   childGrade :{
     type: String,
-    required: true
+    required: true,
+    exportable: true
   },
   childNation :{
     type: String,
-    required: true
+    required: true,
+    exportable: true
   },
   timeslot: {
     type: TimeSlot.Schema,

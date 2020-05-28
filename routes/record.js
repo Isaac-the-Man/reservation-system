@@ -48,6 +48,7 @@ router.post('/', async (req, res) => {
     name: req.body.name,
     email: req.body.email,
     phone: req.body.phone,
+    city: req.body.city,
     childName: req.body.childName,
     childGrade: req.body.childGrade,
     childNation: req.body.childNation,
@@ -55,7 +56,7 @@ router.post('/', async (req, res) => {
   });
   const response = await newRecord.save();
   // create ticket qrcode
-  const ticket = await QRCode.toDataURL("https://pasportal.pacificamerican.org/reserve/verify/" + newRecord._id);
+  const ticket = await QRCode.toDataURL(config.get('baseURL') + "/reserve/verify/" + newRecord._id);
   console.log(ticket);
   // send mail
   let transporter = nodemailer.createTransport({
@@ -130,7 +131,7 @@ router.get('/csv', auth('admin'), async (req, res) => {
     }
   }
   const records = await Record.Model.find(rangeQuery).sort('timeslot.startDateTime').lean();
-  const csv = parse(records, { fields: ['name', 'email', 'phone', 'childName'
+  const csv = parse(records, { fields: ['name', 'email', 'phone', 'city', 'childName'
     , 'childGrade', 'childNation', 'timeslot.startDateTime', 'timeslot.endDateTime', 'completion'], excelStrings: true });
   res.attachment('record.csv');
   res.status(200);
