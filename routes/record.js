@@ -75,7 +75,7 @@ router.post('/', async (req, res) => {
       from: `"✔️PAS Reservation E-Ticket✔️" <${config.get('mail.senderAccount')}>`, // sender address
       to: newRecord.email, // list of receivers
       cc: config.get('mail.cc'),
-      subject: "PAS Reservation E-Ticket", // Subject line
+      subject: "亞太美國學校2020說明會", // Subject line
       html: `
       <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
       <body style="font-family: 'Roboto', sans-serif; color: black; background-color: #e3e3e3;">
